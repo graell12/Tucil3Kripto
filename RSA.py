@@ -19,7 +19,7 @@ def kunciPrivatD(phi, e):
     k = 1
     found = False
     while not(found):
-        d = (1+k*phi)/e
+        d = ((1+k*phi)/e)
         if (d % 1) != 0:
             k += 1
         else:
@@ -46,25 +46,28 @@ def enkripsiRSA(text, e, n):
 def dekripsiRSA(text, d, n):
     plaintext = []
     for i in range (len(text)):
-        temp = int((text[i] ** d) % n)
-        hasil = chr(temp)
-        plaintext.append(hasil)
+        temp = text[i]
+        for j in range (int(d) - 1):
+            temp = temp * text[i]
+        temp = temp % n
+        plaintext.append(chr(temp))
+
     return plaintext
 
-text = "Hello alice"
-p = 2 #input user dicek dulu di isprima
-q = 3 #input user dicek dulu di isprima
+text = "hah gimana alice?"
+p = 47 #input user dicek dulu di isprima
+q = 71 #input user dicek dulu di isprima
 n = p*q
 phi = (p-1)*(q-1)
-e = 1 #input user dicek dulu di fungsi relatif prima
+e = 79 #input user dicek dulu di fungsi relatif prima
 d = kunciPrivatD(phi, e)
 
 print(n)
 print(phi)
 print(d)
 
-y = alphabetOnly(text)
-x = textToInt(y)
+#y = alphabetOnly(text)
+x = textToInt(text)
 
 print(x)
 
