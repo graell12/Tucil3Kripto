@@ -40,7 +40,7 @@ def validate(filename, publ, signfile=""):
         msgdigest = sha.hash(contents, False)
         sign = tools.readtxt(signfile)
         sign = re.split(r'\n<ds>|</ds>', sign)[1]
-        # sign = sign[sign.find('<ds>') + 4 : sign.find('</ds>')]
+        
 
     signdig = RSA.dekripsiRSA(int(sign), e, N)
     digest = int.from_bytes(msgdigest, "big")
