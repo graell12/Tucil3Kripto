@@ -20,13 +20,13 @@ def readbin(filename):
     return contents
 
 # get file extension
-def getextention(filename):
+def getextension(filename):
     extension = pathlib.Path(filename).suffix
     return extension
 
 # append key to txt file
 def appendsignaturetxt(sign, filename):
-    with open(f'''{pathlib.Path(filename).stem}.txt''', "a") as file:
+    with open(f'''{pathlib.Path(filename).stem}.txt''', "w") as file:
         file.write(sign)
     file.close()
 

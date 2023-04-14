@@ -86,12 +86,12 @@ def keyGenerator(keysize = 512):
     d = 0
     N = 0
 
-    print('hello')
+    # print('hello')
 
     p = randomPrimeCandidate(keysize)
     q = randomPrimeCandidate(keysize)
 
-    print('hello')
+    # print('hello')
     N = p * q
     phi = (p - 1)*(q - 1)
 
@@ -123,6 +123,7 @@ def kunciPrivatD(phi, e):
 #    return (listofText)
 
 def enkripsiRSA(text, e, n):
+    return pow(text, e, n)
     cipher = ""
 
     for c in text:
@@ -132,9 +133,10 @@ def enkripsiRSA(text, e, n):
     return cipher
 
 def dekripsiRSA(cipher, d, n):
+    return pow(cipher, d, n)
     text = ""
 
-    parts = cipher.split()
+    parts = cipher.split()  
     for part in parts:
         if part:
             c = int((part))
@@ -145,16 +147,17 @@ def dekripsiRSA(cipher, d, n):
 # testing main
 # keysize = int(input("keysize : "))
 
-# e, d, N = keyGenerator(keysize)
+e, d, N = keyGenerator(1024)
 
-# text = "yg benr ae bro"
+text = 69420
 
-# enc = enkripsiRSA(text, e, N)
+enc = enkripsiRSA(text, e, N)
 # print(f"Text :{text}")
 # print(f"e :{e}")
 # print(f"d :{d}")
 # print(f"N :{N}")
 # print(f"enc :{enc}")
-# dec = dekripsiRSA(enc, d, N)
+dec = dekripsiRSA(enc, d, N)
+# print(dec)
 
 # print(f"dec :{dec}")
