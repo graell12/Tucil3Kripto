@@ -1,10 +1,9 @@
 import sys
-from PyQt6 import QtCore, QtGui, QtWidgets
+from PyQt6 import QtWidgets
 from PyQt6.QtWidgets import QApplication, QMainWindow, QFileDialog
 from PyQt6.uic import loadUi
+import tools, utils
 
-
-# nitip masih yg kmrn :)
 class MainMenu(QMainWindow):
     def __init__(self):
         super(MainMenu, self).__init__()
@@ -20,7 +19,7 @@ class MainMenu(QMainWindow):
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
     def digiSign(self):
-        digiSign = GenerateKey()
+        digiSign = DigitalSign()
         widget.addWidget(digiSign)
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
@@ -33,16 +32,13 @@ class GenerateKey(QMainWindow):
     def __init__(self):
         super(GenerateKey, self).__init__()
         loadUi("generate_key.ui", self)
-        self.importMessageButton.clicked.connect(self.importMessage)
+        self.generateButton.clicked.connect(self.generate)
         self.backButton.clicked.connect(self.back)
 
-    def importMessage(self):
+    def generate(self):
         fileName = self.fileTextEdit.toPlainText()
-        with open(fileName + ".pri", 'w') as f:
-            f.write("hasil priv key")
-
-        with open(fileName + ".pub", 'w') as f:
-            f.write("hasil pub key")
+        tools.writekey(fileName)
+        self.label_2.setText("Key Pair Generated")
 
     def back(self):
         back = MainMenu()
@@ -50,6 +46,9 @@ class GenerateKey(QMainWindow):
         widget.setCurrentIndex(widget.currentIndex() + 1)
 
 class DigitalSign(QMainWindow):
+    filename = ''
+    privKey = ''
+
     def __init__(self):
         super(DigitalSign, self).__init__()
         loadUi("digital_sign.ui", self)
@@ -60,18 +59,17 @@ class DigitalSign(QMainWindow):
 
     def importMessage(self):
         fname = QFileDialog.getOpenFileName(self, "Choose File", "")
-        self.fileLoc = fname[0]
+        self.filename = fname[0]
         self.label_4.setText("File Imported Successfully")
 
-    # def importPriv(self):
-    #     fname = QFileDialog.getOpenFileName(self, "Choose File", "")
-    #     self.privKey = p.read_from_file(fname[0])
-    #     self.label_4.setText("Private Key Imported Successfully")
+    def importPriv(self):
+        fname = QFileDialog.getOpenFileName(self, "Choose File", "")
+        self.privKey = fname[0]
+        self.label_4.setText("Private Key Imported Successfully")
     
-
-    # def generate(self):
-    #     sign_text_file(self.fileLoc, '\output.txt', self.pubKey)
-    #     self.label_4.setText("Generated Successfully")
+    def generate(self):
+        utils.sign(self.filename, self.privKey)
+        self.label_4.setText("Digital Sign Generated Successfully")
 
     def back(self):
         back = MainMenu()
@@ -80,6 +78,10 @@ class DigitalSign(QMainWindow):
     
 
 class Verify(QMainWindow):
+    filename = ''
+    digisign = ''
+    pubKey = ''
+
     def __init__(self):
         super(Verify, self).__init__()
         loadUi("verify.ui", self)
@@ -91,26 +93,26 @@ class Verify(QMainWindow):
 
     def importMessage(self):
         fname = QFileDialog.getOpenFileName(self, "Choose File", "")
-        self.fileLoc = fname[0]
+        self.filename = fname[0]
         self.label.setText("File Imported Successfully")
 
-    # def importDS(self):
-    #     fname = QFileDialog.getOpenFileName(self, "Choose File", "")
-    #     self.fileLoc = fname[0]
-    #     self.label.setText("File Imported Successfully")
+    def importDS(self):
+        fname = QFileDialog.getOpenFileName(self, "Choose File", "")
+        self.digisign = fname[0]
+        self.label.setText("Digital Signature Imported Successfully")
 
-    # def importPub(self):
-    #     fname = QFileDialog.getOpenFileName(self, "Choose File", "")
-    #     self.pubKey = p.read_from_file(fname[0])
-    #     self.label.setText("Public Key Imported Successfully")
+    def importPub(self):
+        fname = QFileDialog.getOpenFileName(self, "Choose File", "")
+        self.pubKey = fname[0]
+        self.label.setText("Public Key Imported Successfully")
     
 
-    # def verify(self):
-    #     # sign_text_file(self.fileLoc, '\output.txt', self.pubKey)
-    #     # if bener
-    #     self.label.setText("File verified")
-    #     # if salah
-    #     self.label.setText("File has been modified")
+    def verify(self):
+        result = utils.validate(self.filename, self.pubKey, self.digisign)
+        if result == "VALID.":
+            self.label.setText("File verified")
+        else:
+            self.label.setText("File has been modified")
 
     def back(self):
         back = MainMenu()
@@ -121,6 +123,8 @@ app = QApplication(sys.argv)
 mainmenu = MainMenu()
 widget = QtWidgets.QStackedWidget()
 widget.addWidget(mainmenu)
+widget.setFixedHeight(900)
+widget.setFixedWidth(900)
 widget.show()
 
 sys.exit(app.exec())
