@@ -13,6 +13,31 @@ primeUnder1000 = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59
    797, 809, 811, 821, 823, 827, 829, 839, 853, 857, 859, 863, 877, 881, 883, 887, 907, 
    911, 919, 929, 937, 941, 947, 953, 967, 971, 977, 983, 991, 997]
 
+def miller_rabin_test(x: int) -> bool:
+    r = 0
+    s = x-1
+    while s % 2 == 0:
+        s >>= 1
+        r += 1
+    if not (2 ** r * s == x - 1):
+        return False
+
+    def trial(test):
+        if pow(test, s, x) == 1:
+            return False
+        for i in range(r):
+            if pow(test, 2 ** i * s, x) == x - 1:
+                return False
+        else:
+            return True
+
+    for i in range(5):
+        test = random.randrange(2, x)
+        if trial(test):
+            return False
+    return True
+
+
 def primeNumber(x):
     temp = False
     if (x < 2):
@@ -21,27 +46,34 @@ def primeNumber(x):
     if x in primeUnder1000:
         return True
     for i in primeUnder1000:
-        if (x & i == 0):
+        if (x % i == 0):
             return False
     
-    r = 0
-    s = x-1 
-    if (temp == True):
-        while s % 2 == 0:
-            r += 1
-            s //= 2
-        for _ in range(5):
-            a = random.randrange(2, x - 1)
-            v = pow(a, s, x)
-            if v != 1:
-                i = 0
-                while v != (x - 1):
-                    if i == r - 1:
-                        return False
-                    else:
-                        i = i + 1
-                        v = (v ** 2) % x
-            return True
+    return miller_rabin_test(x)
+    # r = 0
+    # s = x-1 
+    # if (temp == True):
+    #     while s % 2 == 0:
+    #         r += 1
+    #         s >>= 1
+    #     for _ in range(5):
+    #         a = random.randrange(2, x - 1)
+    #         v = pow(a, s, x)
+    #         if v != 1:
+    #             for i in range(r):
+    #                 if pow(a, 2**i*s, x) == x - 1:
+    #                     return False
+    #             else:
+    #                 return True
+    #             i = 0
+    #             while v != (x - 1):
+    #                 if i == r - 1:
+    #                     return False
+    #                 else:
+    #                     i = i + 1
+    #                     v = (v ** 2) % x
+    #         else: 
+    #             return False
 
 def randomPrimeCandidate(keysize = 512):
     while True:
@@ -54,9 +86,12 @@ def keyGenerator(keysize = 512):
     d = 0
     N = 0
 
+    print('hello')
+
     p = randomPrimeCandidate(keysize)
     q = randomPrimeCandidate(keysize)
 
+    print('hello')
     N = p * q
     phi = (p - 1)*(q - 1)
 
@@ -92,7 +127,7 @@ def enkripsiRSA(text, e, n):
 
     for c in text:
         m = ord(c)
-        cipher += str(pow(m, e, N)) + " "
+        cipher += str(pow(m, e, n)) + " "
 
     return cipher
 
@@ -108,18 +143,18 @@ def dekripsiRSA(cipher, d, n):
     return text
 
 # testing main
-keysize = int(input("keysize : "))
+# keysize = int(input("keysize : "))
 
-e, d, N = keyGenerator(keysize)
+# e, d, N = keyGenerator(keysize)
 
-text = "yg benr ae bro"
+# text = "yg benr ae bro"
 
-enc = enkripsiRSA(text, e, N)
-print(f"Text :{text}")
-print(f"e :{e}")
-print(f"d :{d}")
-print(f"N :{N}")
-print(f"enc :{enc}")
-dec = dekripsiRSA(enc, d, N)
+# enc = enkripsiRSA(text, e, N)
+# print(f"Text :{text}")
+# print(f"e :{e}")
+# print(f"d :{d}")
+# print(f"N :{N}")
+# print(f"enc :{enc}")
+# dec = dekripsiRSA(enc, d, N)
 
-print(f"dec :{dec}")
+# print(f"dec :{dec}")

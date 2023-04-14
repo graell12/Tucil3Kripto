@@ -1,4 +1,5 @@
 import pathlib
+import RSA
 
 # read key file
 def readkeyfile(filename):
@@ -34,3 +35,16 @@ def writefile(contents, filename):
     with open(f'''{pathlib.Path(filename).stem}.txt''', "w") as file:
         file.write(contents)
     file.close()
+
+# write key
+def writekey(filename):
+    keySize = 512
+    e, d, N = RSA.keyGenerator()
+
+    filepub = open(filename + ".pub", 'w')
+    filepub.write(f"""{str(keySize)},{str(N)},{str(e)}""")
+    filepub.close()
+    
+    filepri = open(filename + ".pri", 'w')
+    filepri.write(f"""{str(keySize)},{str(N)},{str(d)}""")
+    filepri.close()
