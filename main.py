@@ -68,8 +68,11 @@ class DigitalSign(QMainWindow):
         self.label_4.setText("Private Key Imported Successfully")
     
     def generate(self):
-        utils.sign(self.filename, self.privKey)
-        self.label_4.setText("Digital Sign Generated Successfully")
+        try:
+            utils.sign(self.filename, self.privKey)
+            self.label_4.setText("Digital Sign Generated Successfully")
+        except FileNotFoundError as e:
+            self.label_4.setText("Error! Missing Parameter")
 
     def back(self):
         back = MainMenu()
@@ -108,11 +111,14 @@ class Verify(QMainWindow):
     
 
     def verify(self):
-        result = utils.validate(self.filename, self.pubKey, self.digisign)
-        if result == "VALID.":
-            self.label.setText("File verified")
-        else:
-            self.label.setText("File has been modified")
+        try:
+            result = utils.validate(self.filename, self.pubKey, self.digisign)
+            if result == "VALID.":
+                self.label.setText("File verified")
+            else:
+                self.label.setText("File has been modified")
+        except FileNotFoundError as e:
+            self.label.setText("Error! Missing Parameter")
 
     def back(self):
         back = MainMenu()
